@@ -1,0 +1,440 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  username          String    @unique
+  name              String?
+  bio               String?
+  avatarUrl         String?
+  country           String?
+  university        String?
+  currentRole       String?
+  company           String?
+  website           String?
+  twitterHandle     String?
+  linkedinUrl       String?
+  emailVerified     Boolean   @default(false)
+  passwordHash      String?
+  role              UserRole  @default(USER)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  accounts          Account[]
+  developerScore    DeveloperScore?
+  trustScore        TrustScore?
+  developerDNA      DeveloperDNA?
+  badges            UserBadge[]
+  achievements      Achievement[]
+  projects          Project[]
+  rankingEntry      RankingEntry?
+  activityLogs      ActivityLog[]
+  verificationRecord VerificationRecord?
+  leaderboardEntries LeaderboardEntry[]
+  challengeParticipations ChallengeParticipation[]
+  sessions          Session[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  RECRUITER
+  ADMIN
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id           String        @id @default(cuid())
+  userId       String
+  platform     Platform
+  platformId   String?
+  username     String?
+  profileUrl   String?
+  accessToken  String?
+  refreshToken String?
+  connected    Boolean       @default(false)
+  lastSyncAt   DateTime?
+  syncStatus   SyncStatus    @default(PENDING)
+  rawData      Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform])
+  @@map("accounts")
+}
+
+enum Platform {
+  GITHUB
+  GITLAB
+  LEETCODE
+  HACKERRANK
+  CODEFORCES
+  CODECHEF
+  ATCODER
+  KAGGLE
+  DEVTO
+  MEDIUM
+  STACKOVERFLOW
+  PRODUCTHUNT
+}
+
+enum SyncStatus {
+  PENDING
+  SYNCING
+  COMPLETED
+  FAILED
+}
+
+model DeveloperScore {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  overallScore        Int      @default(0)
+  problemSolvingScore Int      @default(0)
+  engineeringScore    Int      @default(0)
+  projectsScore       Int      @default(0)
+  openSourceScore     Int      @default(0)
+  collaborationScore  Int      @default(0)
+  knowledgeSharingScore Int    @default(0)
+  learningVelocityScore Int    @default(0)
+  professionalScore   Int      @default(0)
+  lastCalculatedAt    DateTime @default(now())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scoreHistory        ScoreHistory[]
+
+  @@map("developer_scores")
+}
+
+model ScoreHistory {
+  id              String         @id @default(cuid())
+  developerScoreId String
+  overallScore    Int
+  snapshot        Json
+  recordedAt      DateTime       @default(now())
+
+  developerScore  DeveloperScore @relation(fields: [developerScoreId], references: [id], onDelete: Cascade)
+
+  @@map("score_history")
+}
+
+model TrustScore {
+  id                  String      @id @default(cuid())
+  userId              String      @unique
+  score               Int         @default(0)
+  level               TrustLevel  @default(UNVERIFIED)
+  accountAge          Int         @default(0)
+  consistencyScore    Int         @default(0)
+  verificationLevel   Int         @default(0)
+  authenticityScore   Int         @default(0)
+  activityQualityScore Int        @default(0)
+  lastCalculatedAt    DateTime    @default(now())
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("trust_scores")
+}
+
+enum TrustLevel {
+  UNVERIFIED
+  BASIC
+  VERIFIED
+  HIGHLY_TRUSTED
+  ELITE
+}
+
+model DeveloperDNA {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  builderScore    Int      @default(0)
+  problemSolverScore Int   @default(0)
+  researcherScore Int      @default(0)
+  leaderScore     Int      @default(0)
+  openSourceScore Int      @default(0)
+  educatorScore   Int      @default(0)
+  entrepreneurScore Int    @default(0)
+  primaryType     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("developer_dna")
+}
+
+model Badge {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  description String
+  icon        String
+  category    BadgeCategory
+  criteria    Json
+  rarity      BadgeRarity @default(COMMON)
+  createdAt   DateTime    @default(now())
+
+  userBadges  UserBadge[]
+
+  @@map("badges")
+}
+
+enum BadgeCategory {
+  PROBLEM_SOLVING
+  OPEN_SOURCE
+  BUILDING
+  COMMUNITY
+  RESEARCH
+  LEARNING
+  PROFESSIONAL
+  SPECIAL
+}
+
+enum BadgeRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+model Achievement {
+  id          String            @id @default(cuid())
+  userId      String
+  type        AchievementType
+  title       String
+  description String?
+  organization String?
+  date        DateTime?
+  url         String?
+  verified    Boolean           @default(false)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("achievements")
+}
+
+enum AchievementType {
+  HACKATHON
+  COMPETITION
+  CERTIFICATION
+  AWARD
+  PUBLICATION
+  CONFERENCE
+  OTHER
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  githubUrl   String?
+  liveUrl     String?
+  screenshots Json?
+  techStack   String[]
+  stars       Int      @default(0)
+  forks       Int      @default(0)
+  contributors Int     @default(0)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("projects")
+}
+
+model RankingEntry {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  globalRank    Int?
+  countryRank   Int?
+  universityRank Int?
+  technologyRank Int?
+  percentile    Float?
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ranking_entries")
+}
+
+model LeaderboardEntry {
+  id          String            @id @default(cuid())
+  userId      String
+  category    LeaderboardCategory
+  scope       LeaderboardScope
+  scopeValue  String?
+  rank        Int
+  score       Int
+  updatedAt   DateTime          @updatedAt
+
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, category, scope, scopeValue])
+  @@map("leaderboard_entries")
+}
+
+enum LeaderboardCategory {
+  OVERALL
+  PROBLEM_SOLVING
+  OPEN_SOURCE
+  PROJECTS
+  TRUST_SCORE
+}
+
+enum LeaderboardScope {
+  GLOBAL
+  COUNTRY
+  UNIVERSITY
+  TECHNOLOGY
+}
+
+model Country {
+  code      String @id
+  name      String
+  flagEmoji String?
+
+  @@map("countries")
+}
+
+model University {
+  id      String @id @default(cuid())
+  name    String
+  country String?
+  domain  String?
+
+  @@map("universities")
+}
+
+model Technology {
+  id   String @id @default(cuid())
+  name String @unique
+  icon String?
+  category String?
+
+  @@map("technologies")
+}
+
+model ActivityLog {
+  id        String       @id @default(cuid())
+  userId    String
+  type      ActivityType
+  title     String
+  metadata  Json?
+  points    Int          @default(0)
+  createdAt DateTime     @default(now())
+
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("activity_logs")
+}
+
+enum ActivityType {
+  SCORE_CHANGE
+  BADGE_EARNED
+  ACCOUNT_CONNECTED
+  PROJECT_ADDED
+  ACHIEVEMENT_ADDED
+  RANK_CHANGE
+  MILESTONE
+}
+
+model VerificationRecord {
+  id              String            @id @default(cuid())
+  userId          String            @unique
+  level           VerificationLevel @default(LEVEL_0)
+  emailVerified   Boolean           @default(false)
+  githubVerified  Boolean           @default(false)
+  multiPlatform   Boolean           @default(false)
+  eliteVerified   Boolean           @default(false)
+  verifiedAt      DateTime?
+  updatedAt       DateTime          @updatedAt
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("verification_records")
+}
+
+enum VerificationLevel {
+  LEVEL_0
+  LEVEL_1
+  LEVEL_2
+  LEVEL_3
+  LEVEL_4
+}
+
+model Challenge {
+  id          String       @id @default(cuid())
+  title       String
+  description String
+  type        ChallengeType
+  startDate   DateTime
+  endDate     DateTime
+  reward      Json?
+  createdAt   DateTime     @default(now())
+
+  participations ChallengeParticipation[]
+
+  @@map("challenges")
+}
+
+enum ChallengeType {
+  CODING
+  OPEN_SOURCE
+  HACKATHON
+  LEARNING
+}
+
+model ChallengeParticipation {
+  id          String    @id @default(cuid())
+  userId      String
+  challengeId String
+  score       Int       @default(0)
+  rank        Int?
+  completed   Boolean   @default(false)
+  joinedAt    DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+  @@map("challenge_participations")
+}
