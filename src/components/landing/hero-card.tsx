@@ -1,155 +1,144 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ScoreRing } from "@/components/ui/score-ring";
-import { Badge } from "@/components/ui/badge";
-import { Shield, Globe, TrendingUp, Star } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Shield, Globe, TrendingUp } from "lucide-react";
 
-const PLATFORMS = [
-  { name: "GitHub", color: "#333", icon: "GH" },
-  { name: "LeetCode", color: "#FFA116", icon: "LC" },
-  { name: "Codeforces", color: "#1F8DD6", icon: "CF" },
-  { name: "HackerRank", color: "#00EA64", icon: "HR" },
-  { name: "Kaggle", color: "#20BEFF", icon: "KG" },
-  { name: "CodeChef", color: "#5B4638", icon: "CC" },
-  { name: "AtCoder", color: "#955FFF", icon: "AC" },
+const PLATFORM_DOTS = [
+  { name: "GitHub", color: "#24292E" },
+  { name: "LeetCode", color: "#FFA116" },
+  { name: "Codeforces", color: "#1F8DD6" },
+  { name: "HackerRank", color: "#00EA64" },
+  { name: "Kaggle", color: "#20BEFF" },
+  { name: "CodeChef", color: "#5B4638" },
+  { name: "AtCoder", color: "#955FFF" },
 ];
 
 export function HeroCard() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
   return (
     <div className="relative w-full max-w-sm mx-auto">
-      {/* Glow effect */}
+      {/* Glow */}
       <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#4F46E5]/30 via-transparent to-[#14B8A6]/20 blur-2xl scale-105" />
 
-      {/* Main card */}
+      {/* Card */}
       <div className="relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[#4F46E5] to-[#6366F1] flex items-center justify-center text-xl font-bold text-white shadow-lg">
-                A
-              </div>
-              <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-[#10B981] border-2 border-[#0B0F1A]" />
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[#4F46E5]/40 to-[#6366F1]/20 border border-white/10 flex items-center justify-center">
+              <div className="h-6 w-6 rounded-full bg-white/20" />
             </div>
-            <div>
-              <p className="text-white font-semibold text-sm">Alex Chen</p>
-              <p className="text-white/50 text-xs">@alexchen • 🇺🇸 USA</p>
+            <div className="space-y-1.5">
+              <div className="h-3 w-24 rounded bg-white/20" />
+              <div className="h-2 w-16 rounded bg-white/10" />
             </div>
           </div>
-          <Badge className="bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30 text-xs">
-            <Shield className="h-3 w-3" />
-            Elite
-          </Badge>
+          <div className="flex items-center gap-1.5 rounded-full border border-[#10B981]/30 bg-[#10B981]/15 px-2.5 py-1">
+            <Shield className="h-3 w-3 text-[#10B981]" />
+            <span className="text-[#10B981] text-xs font-medium">Verified</span>
+          </div>
         </div>
 
-        {/* Score display */}
-        <div className="flex items-center justify-between mb-6">
-          <ScoreRing score={847} size={120} strokeWidth={8} animate />
-          <div className="flex flex-col gap-3 flex-1 ml-6">
+        {/* Score ring placeholder */}
+        <div className="flex items-center gap-5 mb-6">
+          <div className="relative flex-shrink-0">
+            <svg width={120} height={120} viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" />
+              <circle
+                cx="60" cy="60" r="50"
+                fill="none"
+                stroke="url(#scoreGrad)"
+                strokeWidth="8"
+                strokeDasharray="314"
+                strokeDashoffset="55"
+                strokeLinecap="round"
+                style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%" }}
+              />
+              <defs>
+                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#4F46E5" />
+                  <stop offset="100%" stopColor="#14B8A6" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-2xl font-bold text-white">—</span>
+              <span className="text-xs text-white/40">Score</span>
+            </div>
+          </div>
+
+          <div className="flex-1 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-white/60 text-xs">Trust Score</span>
-              <span className="text-white font-bold text-sm">96%</span>
+              <span className="text-white/50 text-xs flex items-center gap-1">
+                <Shield className="h-3 w-3" /> Trust
+              </span>
+              <span className="text-white/30 text-xs">—</span>
             </div>
-            <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full w-[96%] rounded-full bg-gradient-to-r from-[#4F46E5] to-[#14B8A6]" />
+            <div className="h-1.5 rounded-full bg-white/8 overflow-hidden">
+              <div className="h-full w-0 rounded-full bg-gradient-to-r from-[#4F46E5] to-[#14B8A6]" />
             </div>
-            <div className="flex items-center gap-1 text-xs text-white/60">
-              <Globe className="h-3 w-3" />
-              <span>Global Rank</span>
-              <span className="ml-auto text-white font-semibold">#4,352</span>
+            <div className="flex items-center justify-between text-xs text-white/50">
+              <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> Global Rank</span>
+              <span className="text-white/30">—</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-white/60">
-              <TrendingUp className="h-3 w-3 text-[#10B981]" />
-              <span>Country Rank</span>
-              <span className="ml-auto text-white font-semibold">#218</span>
+            <div className="flex items-center justify-between text-xs text-white/50">
+              <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3 text-[#10B981]" /> Country</span>
+              <span className="text-white/30">—</span>
             </div>
           </div>
         </div>
 
-        {/* Category scores */}
+        {/* Category bars */}
         <div className="grid grid-cols-2 gap-2 mb-5">
           {[
-            { label: "Problem Solving", score: 812, color: "#4F46E5" },
-            { label: "Engineering", score: 945, color: "#14B8A6" },
-            { label: "Open Source", score: 903, color: "#10B981" },
-            { label: "Projects", score: 788, color: "#F59E0B" },
-          ].map(({ label, score, color }) => (
+            { label: "Problem Solving", color: "#4F46E5" },
+            { label: "Engineering", color: "#14B8A6" },
+            { label: "Open Source", color: "#10B981" },
+            { label: "Projects", color: "#F59E0B" },
+          ].map(({ label, color }) => (
             <div key={label} className="rounded-xl bg-white/5 border border-white/8 p-2.5">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-white/50 text-xs">{label}</span>
-                <span className="font-bold text-xs" style={{ color }}>{score}</span>
+                <span className="text-white/40 text-xs truncate">{label}</span>
+                <span className="text-white/20 text-xs ml-1">—</span>
               </div>
-              <div className="h-1 rounded-full bg-white/10 overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-1000"
-                  style={{ width: `${(score / 1000) * 100}%`, background: color }}
-                />
-              </div>
+              <div className="h-1 rounded-full bg-white/8" />
             </div>
           ))}
         </div>
 
-        {/* Connected platforms */}
+        {/* Platforms */}
         <div>
-          <p className="text-white/40 text-xs mb-2">Connected Platforms</p>
+          <p className="text-white/30 text-xs mb-2">Connect platforms</p>
           <div className="flex items-center gap-1.5 flex-wrap">
-            {PLATFORMS.map((p) => (
+            {PLATFORM_DOTS.map((p) => (
               <div
                 key={p.name}
-                className="relative group"
                 title={p.name}
-              >
-                <div
-                  className="h-7 w-7 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm border border-white/10"
-                  style={{ backgroundColor: p.color }}
-                >
-                  {p.icon}
-                </div>
-                <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-[#10B981] border border-[#0B0F1A]" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Badges strip */}
-        <div className="mt-4 pt-4 border-t border-white/8 flex items-center gap-2">
-          <Star className="h-3.5 w-3.5 text-[#F59E0B]" />
-          <div className="flex gap-1.5 flex-wrap">
-            {["Elite Problem Solver", "Open Source Veteran", "Builder"].map((b) => (
-              <span key={b} className="text-xs text-white/50 bg-white/5 border border-white/10 rounded-lg px-2 py-0.5">
-                {b}
-              </span>
+                className="h-7 w-7 rounded-lg border border-white/10 opacity-40"
+                style={{ backgroundColor: p.color }}
+              />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Floating stats */}
-      <div className={cn(
-        "absolute -top-3 -right-4 rounded-xl border border-white/10 bg-white/10 backdrop-blur-xl px-3 py-2 shadow-xl",
-        "animate-[float_3s_ease-in-out_infinite]"
-      )}>
-        <p className="text-white/50 text-xs">Verification</p>
+      {/* Floating tags */}
+      <div className="absolute -top-3 -right-4 rounded-xl border border-white/10 bg-white/8 backdrop-blur-xl px-3 py-2 shadow-xl"
+        style={{ animation: "float 3s ease-in-out infinite" }}>
+        <p className="text-white/40 text-xs">Verification</p>
         <p className="text-white font-bold text-sm">Level 4 ⭐</p>
       </div>
 
-      <div className={cn(
-        "absolute -bottom-3 -left-4 rounded-xl border border-white/10 bg-white/10 backdrop-blur-xl px-3 py-2 shadow-xl",
-        "animate-[float_3s_ease-in-out_0.5s_infinite]"
-      )}>
-        <p className="text-white/50 text-xs">Learning Velocity</p>
-        <p className="text-[#14B8A6] font-bold text-sm">↑ +42 pts this week</p>
+      <div className="absolute -bottom-3 -left-4 rounded-xl border border-white/10 bg-white/8 backdrop-blur-xl px-3 py-2 shadow-xl"
+        style={{ animation: "float 3s ease-in-out 0.5s infinite" }}>
+        <p className="text-white/40 text-xs">Score updates</p>
+        <p className="text-[#14B8A6] font-bold text-sm">↑ Real-time</p>
       </div>
+
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+      `}</style>
     </div>
   );
 }

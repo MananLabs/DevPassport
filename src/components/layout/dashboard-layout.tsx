@@ -20,6 +20,7 @@ import {
   X,
   Bell,
   ChevronRight,
+  User,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -35,11 +36,9 @@ const NAV_ITEMS = [
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  username?: string;
-  score?: number;
 }
 
-export function DashboardLayout({ children, username = "alexchen", score = 847 }: DashboardLayoutProps) {
+export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -55,28 +54,26 @@ export function DashboardLayout({ children, username = "alexchen", score = 847 }
       >
         {/* Logo */}
         <div className="flex h-16 items-center gap-2.5 border-b border-[var(--border)] px-5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#4F46E5] shadow-sm">
-            <span className="text-white font-bold text-sm">D</span>
-          </div>
-          <span className="font-bold text-[var(--foreground)]">
-            Dev<span className="text-[#4F46E5]">Passport</span>
-          </span>
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#4F46E5] shadow-sm">
+              <span className="text-white font-bold text-sm">D</span>
+            </div>
+            <span className="font-bold text-[var(--foreground)]">
+              Dev<span className="text-[#4F46E5]">Passport</span>
+            </span>
+          </Link>
         </div>
 
-        {/* User summary */}
+        {/* User placeholder */}
         <div className="mx-3 mt-4 mb-2 rounded-xl border border-[var(--border)] bg-[var(--secondary)] p-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#4F46E5] text-white font-bold text-sm">
-              {username[0].toUpperCase()}
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--border)]">
+              <User className="h-4 w-4 text-[var(--muted-foreground)]" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[var(--foreground)] truncate">@{username}</p>
-              <div className="flex items-center gap-1">
-                <span className="text-xs text-[#4F46E5] font-bold">{score}</span>
-                <span className="text-xs text-[var(--muted-foreground)]">· Expert</span>
-              </div>
+              <p className="text-sm text-[var(--muted-foreground)]">Not signed in</p>
+              <Link href="/login" className="text-xs text-[#4F46E5] hover:underline">Sign in</Link>
             </div>
-            <ChevronRight className="h-4 w-4 text-[var(--muted-foreground)] shrink-0" />
           </div>
         </div>
 
@@ -98,24 +95,11 @@ export function DashboardLayout({ children, username = "alexchen", score = 847 }
               >
                 <Icon className={cn("h-4 w-4", active && "text-[#4F46E5]")} />
                 {label}
-                {active && (
-                  <div className="ml-auto h-1.5 w-1.5 rounded-full bg-[#4F46E5]" />
-                )}
+                {active && <div className="ml-auto h-1.5 w-1.5 rounded-full bg-[#4F46E5]" />}
               </Link>
             );
           })}
         </nav>
-
-        {/* Bottom */}
-        <div className="border-t border-[var(--border)] p-4">
-          <Link
-            href={`/${username}`}
-            className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] hover:text-[#4F46E5] transition-colors"
-          >
-            <span className="truncate">devpassport.io/{username}</span>
-            <ChevronRight className="h-3 w-3 shrink-0" />
-          </Link>
-        </div>
       </aside>
 
       {/* Overlay */}
@@ -140,9 +124,8 @@ export function DashboardLayout({ children, username = "alexchen", score = 847 }
           <div className="flex-1" />
 
           <div className="flex items-center gap-2">
-            <button className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-[var(--secondary)] text-[var(--muted-foreground)] relative">
+            <button className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-[var(--secondary)] text-[var(--muted-foreground)]">
               <Bell className="h-4 w-4" />
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#4F46E5]" />
             </button>
             <button
               onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}

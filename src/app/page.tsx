@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/layout/navbar";
 import { HeroCard } from "@/components/landing/hero-card";
+import { Component as GradientBackground } from "@/components/ui/gradient-bars-background";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Trophy,
   Shield,
   Code2,
-  Star,
   Users,
   Zap,
   Globe,
@@ -19,8 +18,6 @@ import {
   ArrowRight,
   CheckCircle,
   GitBranch,
-  TrendingUp,
-  BarChart2,
 } from "lucide-react";
 
 const PLATFORM_LOGOS = [
@@ -141,19 +138,27 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative min-h-screen flex items-center pt-16">
+      <GradientBackground
+        backgroundColor="#0B0F1A"
+        gradientFrom="rgb(79, 70, 229)"
+        gradientTo="transparent"
+        numBars={11}
+        animationDuration={3}
+      >
+        {/* Subtle grid overlay */}
         <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
           style={{
             backgroundImage:
               "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(to right, rgba(255,255,255,1) 1px, transparent 1px)",
             backgroundSize: "60px 60px",
           }}
         />
+        {/* Ambient glow blobs */}
         <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-[#4F46E5]/15 blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 h-80 w-80 rounded-full bg-[#14B8A6]/10 blur-3xl pointer-events-none" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-24 lg:py-32 w-full">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-32 pb-24 lg:pt-40 lg:pb-32 w-full">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -218,7 +223,7 @@ export default function LandingPage() {
             </motion.div>
           </div>
         </div>
-      </section>
+      </GradientBackground>
 
       {/* Platform scroll */}
       <section className="border-t border-white/5 py-2">

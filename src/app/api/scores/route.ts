@@ -32,24 +32,18 @@ export async function POST(request: NextRequest) {
     });
 
     const trustScore = calculateTrustScore({
-      accountAgeDays: metrics.accountAgeDays || 365,
-      connectedPlatforms: metrics.connectedPlatforms || 1,
+      accountAgeDays: metrics.accountAgeDays || 0,
+      connectedPlatforms: metrics.connectedPlatforms || 0,
       emailVerified: metrics.emailVerified || false,
       githubVerified: metrics.githubVerified || false,
-      activityConsistencyScore: metrics.activityConsistencyScore || 50,
+      activityConsistencyScore: metrics.activityConsistencyScore || 0,
     });
 
     const dna = calculateDeveloperDNA(metrics);
 
     return NextResponse.json({
       overall: overallScore,
-      categories: {
-        problemSolving,
-        engineering,
-        openSource,
-        projects,
-        knowledgeSharing,
-      },
+      categories: { problemSolving, engineering, openSource, projects, knowledgeSharing },
       trustScore,
       developerDNA: dna,
     });
@@ -66,23 +60,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "userId required" }, { status: 400 });
   }
 
-  // Demo data
-  return NextResponse.json({
-    userId,
-    overall: 847,
-    categories: {
-      problemSolving: 812,
-      engineering: 945,
-      openSource: 903,
-      projects: 788,
-      collaboration: 760,
-      knowledgeSharing: 695,
-      learningVelocity: 730,
-      professional: 680,
-    },
-    trustScore: 96,
-    globalRank: 4352,
-    countryRank: 218,
-    lastUpdated: new Date().toISOString(),
-  });
+  return NextResponse.json({ error: "Database not configured" }, { status: 501 });
 }

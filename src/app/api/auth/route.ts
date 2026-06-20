@@ -10,12 +10,7 @@ export async function POST(request: NextRequest) {
       if (!email || !password) {
         return NextResponse.json({ error: "Email and password required" }, { status: 400 });
       }
-      // Demo: always succeed for now
-      return NextResponse.json({
-        success: true,
-        user: { id: "demo", email, username: "alexchen", name: "Alex Chen" },
-        token: "demo-token",
-      });
+      return NextResponse.json({ error: "Database not configured" }, { status: 501 });
     }
 
     if (action === "signup") {
@@ -23,11 +18,7 @@ export async function POST(request: NextRequest) {
       if (!email || !username || !password) {
         return NextResponse.json({ error: "All fields required" }, { status: 400 });
       }
-      return NextResponse.json({
-        success: true,
-        user: { id: "demo", email, username, name: username },
-        token: "demo-token",
-      });
+      return NextResponse.json({ error: "Database not configured" }, { status: 501 });
     }
 
     return NextResponse.json({ error: "Unknown action" }, { status: 400 });
